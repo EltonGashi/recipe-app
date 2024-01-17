@@ -1,7 +1,10 @@
 ---
 name: Checks
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   test-lint:
@@ -13,9 +16,19 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USER }}
           password: ${{ secrets.DOCKER_TOKEN }}
+
       - name: Checkout
         uses: actions/checkout@v2
+
       - name: Test
         run: docker-compose run --rm app sh -c "python manage.py wait_for_db && python manage.py test"
+
       - name: Lint
         run: docker-compose run --rm app sh -c "flake8"
+
+      # Save secrets to environment files
+      - name: Save Docker User to Environment File
+        run: echo "DOCKER_USER=${{ secrets.DOCKER_USER }}" >> $GITHUB_ENV
+
+      - name: Save Docker Token to Environment File
+        run: echo "DOCKER_TOKEN=${{ secrets.DOCKER_TOKEN }}" >> $GITHUB_ENV
