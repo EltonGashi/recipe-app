@@ -16,7 +16,7 @@ class UserManager(BaseUserManager):
         """Create, save and return a new user"""
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
-        user.save(using=self._db) #in case you wanna use 2 databases
+        user.save(using=self._db)  # in case you wanna use 2 databases
 
         return user
 
